@@ -1,26 +1,10 @@
-<!DOCTYPE html>
+{% extends 'questions/base.html' %}
+{% load static %}
 
-<html class="h-100" lang="en">
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="css/bootstrap.css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
-          integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-    <script src="js/jquery-3.3.1.slim.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-
-    <title>AskChloe</title>
-</head>
-
-<body class="d-flex flex-column h-100">
+{% block nav %}
 
     <nav class="navbar navbar-light bg-light ">
-        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Ask Chloe</a>
+        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="{% url 'index' %}">Ask Chloe</a>
 
         <ul class="nav justify-content-end">
 
@@ -28,32 +12,34 @@
                 <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
                 <a type="button" class="btn btn-outline-primary mx-1" name="asking" id="ask" autocomplete="off"
-                   href="#"> Ask! </a>
+                   href="{% url 'ask' %}"> Ask! </a>
             </form>
 
             <li class="nav-item dropdown ">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
                    aria-haspopup="true" aria-expanded="false">
-                    <img src="img/Chloe64.jpg" class="rounded-circle"> Chloe Price
+                    <img src="{% static 'img/Chloe64.jpg' %}" class="rounded-circle"> Chloe Price
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#">Profile</a>
-                    <a class="dropdown-item" href="#">Settings</a>
+                    <a class="dropdown-item" href="{% url 'settings' %}">Settings</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Log Out</a>
+                    <a class="dropdown-item" href="{% url 'login' %}">Log Out</a>
                 </div>
             </li>
         </ul>
     </nav>
 
+{% endblock %}
 
-    <div class="container my-2">
+{% block content %}
+
+    <div class="my-2">
         <h2>Settings: Chloe Price</h2>
     </div>
 
-    <div class="container mb-2">
-        <div class="row">
-            <div class="col-8">
+    <!--<div class="container mb-2">-->
+        <!--<div class="row">-->
+            <!--<div class="col-8">-->
 
                 <form>
                     <div class="form-group row">
@@ -99,7 +85,7 @@
                     <div class="form-group row">
                         <div class="col-2"></div>
                         <div class="col-10">
-                            <img src="img/Chloe64.jpg">
+                            <img src="{% static 'img/Chloe64.jpg' %}">
                         </div>
                     </div>
 
@@ -112,38 +98,7 @@
                     </div>
                 </form>
 
-            </div>
+            <!--</div>-->
 
 
-            <div class="col-4">
-                <div class="container">
-                    <h3> Popular tags </h3>
-                    <a href="#">Chloe</a>
-                    <a href="#">Rachel</a>
-                    <a href="#">Amberprice</a>
-                    <a href="#">Max</a>
-                    <a href="#">Pricefield</a>
-                    <a href="#">Arcadia</a>
-                </div>
-
-                <div class="container">
-                    <h3> Best members </h3>
-                    <ul class="list-unstyled">
-                        <li><a  href="#">Chloe Price</a></li>
-                        <li><a  href="#">Rachel Amber</a></li>
-                        <li><a  href="#">Mark Jefferson</a></li>
-                        <li><a  href="#">Max Caulfield</a></li>
-                        <li><a  href="#">Frank Bauers</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <footer class="footer mt-auto py-3">
-        <span class="text-muted mx-3"><a class="navbar-brand" href="#">Arcadia Inc. (C) 2019 - All rights reserved. Meow.</a></span>
-    </footer>
-
-</body>
-</html>
+        {% endblock %}

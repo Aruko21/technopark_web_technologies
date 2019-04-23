@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html class="h-100" lang="en">
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -18,7 +18,7 @@
     <title>AskChloe</title>
 </head>
 
-<body>
+<body class="d-flex flex-column h-100">
 
     <div class="alert alert-danger" role="alert">
         Wrong email or password.
@@ -32,6 +32,8 @@
             <form class="form-inline mt-2 mt-md-0">
                 <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                <a type="button" class="btn btn-outline-primary mx-1" name="asking" id="ask" autocomplete="off"
+                   href="#"> Ask! </a>
             </form>
 
             <li class="nav-item dropdown ">
@@ -52,22 +54,23 @@
             <div class="col-8">
 
                 <form>
-                    <div class="form-group mb-2">
-                        <label for="inputEmail">Enter your email</label>
-                        <input type="text" class="form-control" id="inputEmail" placeholder="example@example.com" required>
+                    <div class="form-group row">
+                        <label for="inputEmail" class="col-2 col-form-label">Enter your email</label>
+                        <div class="col-10">
+                            <input type="text" class="form-control" id="inputEmail" placeholder="example@example.com" required>
+                        </div>
                     </div>
-
-                    <div class="form-group">
-                        <label for="inputPassword">Password</label>
-                        <input type="password" class="form-control" id="inputPassword" placeholder="Password">
+                    <div class="form-group row">
+                        <label for="inputPassword" class="col-2 col-form-label">Password</label>
+                        <div class="col-10">
+                            <input type="password" class="form-control" id="inputPassword" placeholder="Password">
+                            <ul class="list-unstyled">
+                                <li><button type="submit" class="btn btn-primary my-3">Sign In</button></li>
+                                <li><a href="#">Don't registered yet? Join to us!</a></li>
+                            </ul>
+                        </div>
                     </div>
-
-                    <button type="submit" class="btn btn-primary">Sign In</button>
                 </form>
-
-                <div class="my-2">
-                    <a href="#">Don't registered yet? Join to us!</a>
-                </div>
             </div>
 
 
@@ -97,9 +100,9 @@
 
     </div>
 
-    <nav class="navbar fixed-bottom navbar-light bg-light">
-        <a class="navbar-brand" href="#">Arcadia Inc. (C) 2019 - All rights reserved. Meow.</a>
-    </nav>
+    <footer class="footer mt-auto py-3">
+        <span class="text-muted mx-3"><a class="navbar-brand" href="#">Arcadia Inc. (C) 2019 - All rights reserved. Meow.</a></span>
+    </footer>
 
 </body>
 </html>

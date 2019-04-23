@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html class="h-100" lang="en">
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -17,7 +17,7 @@
     <title>AskChloe</title>
 </head>
 
-<body>
+<body class="d-flex flex-column h-100">
 
     <nav class="navbar navbar-light bg-light ">
         <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Ask Chloe</a>
@@ -27,6 +27,8 @@
             <form class="form-inline mt-2 mt-md-0">
                 <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                <a type="button" class="btn btn-outline-primary mx-1" name="asking" id="ask" autocomplete="off"
+                   href="#"> Ask! </a>
             </form>
 
             <li class="nav-item dropdown ">
@@ -47,40 +49,50 @@
             <div class="col-8">
 
                 <form>
-                    <div class="form-group mb-2">
-                        <label for="inputEmail">Email</label>
-                        <input type="text" class="form-control is-invalid" id="inputEmail"
-                               placeholder="example@example.com" required>
-                        <div class="invalid-feedback">
-                            Email is already exists.
+                    <div class="form-group row">
+                        <label for="inputEmail" class="col-2 col-form-label">Email</label>
+                        <div class="col-10">
+                            <input type="text" class="form-control is-invalid" id="inputEmail"
+                                   placeholder="example@example.com" required>
+                            <div class="invalid-feedback">
+                                Email is already exists.
+                            </div>
                         </div>
                     </div>
 
-                    <div class="form-group mb-2">
-                        <label for="inputUsername">Username</label>
-                        <input type="text" class="form-control is-valid" id="inputUsername" placeholder="First name"
-                               required>
-                        <div class="valid-feedback">
-                            Username is available.
+                    <div class="form-group row">
+                        <label for="inputUsername" class="col-2 col-form-label">Username</label>
+                        <div class="col-10">
+                            <input type="text" class="form-control is-valid" id="inputUsername" placeholder="First name"
+                                   required>
+                            <div class="valid-feedback">
+                                Username is available.
+                            </div>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="inputPassword">Password</label>
-                        <input type="password" class="form-control" id="inputPassword" placeholder="Password">
-                    </div>
-                    <div class="form-group">
-                        <label for="passwordConfirmation">Confirm password</label>
-                        <input type="password" class="form-control" id="passwordConfirmation"
-                               placeholder="Password Confirmation">
+                    <div class="form-group row">
+                        <label for="inputPassword" class="col-2 col-form-label">Password</label>
+                        <div class="col-10">
+                            <input type="password" class="form-control" id="inputPassword" placeholder="Password">
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="uploadAvatar">Upload an avatar</label>
-                        <input type="file" class="form-control-file" id="uploadAvatar">
+                    <div class="form-group row">
+                        <label for="passwordConfirmation" class="col-2 col-form-label">Confirm password</label>
+                        <div class="col-10">
+                            <input type="password" class="form-control" id="passwordConfirmation"
+                                   placeholder="Password Confirmation">
+                        </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Sign up</button>
+                    <div class="form-group row">
+                        <label for="uploadAvatar" class="col-2 col-form-label">Upload an avatar</label>
+                        <div class="col-10">
+                            <input type="file" class="form-control-file" id="uploadAvatar">
+                            <button type="submit" class="btn btn-primary my-3">Sign up</button>
+                        </div>
+                    </div>
                 </form>
             </div>
 
@@ -111,8 +123,8 @@
 
     </div>
 
-    <nav class="navbar fixed-bottom navbar-light bg-light">
-        <a class="navbar-brand" href="#">Arcadia Inc. (C) 2019 - All rights reserved. Meow.</a>
-    </nav>
+    <footer class="footer mt-auto py-3">
+        <span class="text-muted mx-3"><a class="navbar-brand" href="#">Arcadia Inc. (C) 2019 - All rights reserved. Meow.</a></span>
+    </footer>
 
 </body>

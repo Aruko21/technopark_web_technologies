@@ -1,0 +1,129 @@
+{% extends 'questions/base.html' %}
+{% load static %}
+
+{% block nav %}
+
+    <nav class="navbar navbar-light bg-light ">
+        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="{% url 'index' %}">Ask Chloe</a>
+
+        <ul class="nav justify-content-end">
+
+            <form class="form-inline mt-2 mt-md-0">
+                <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                <a type="button" class="btn btn-outline-primary mx-1" name="asking" id="ask" autocomplete="off"
+                   href="{% url 'ask' %}"> Ask! </a>
+            </form>
+
+            <li class="nav-item dropdown ">
+                <a class="nav-link" href="{% url 'login' %}">Sign In</a>
+            </li>
+            <li>
+                <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
+            </li>
+        </ul>
+    </nav>
+
+{% endblock %}
+
+{% block content %}
+
+    <!--<div class="col-8">-->
+        <div>
+            <h2 class="mt-2">Question Title</h2>
+        </div>
+        <div class="media my-2">
+            <div class="row px-3">
+                <div class="col-2 ">
+
+                    <div class="row m-2">
+                        <img src="{% static 'img/Chloe64.jpg' %}" class="m-auto rounded" alt="...">
+                    </div>
+
+                    <div class="row m-2 border border-dark rounded">
+                        <h3 class="m-auto">4833</h3>
+                    </div>
+
+                    <div class="row m-2">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-secondary"><i class="far fa-thumbs-up"></i></button>
+                            <button type="button" class="btn btn-secondary"><i class="far fa-thumbs-down"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="media-body col-10 mt-1 mx-0">
+                    <div class="row">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus corporis
+                            pariatur repellat repudiandae! Ad beatae, dolor ea eaque est hic illum impedit in
+                            ipsum minima, minus modi molestias nam quasi similique suscipit totam velit!
+                            Aperiam dolores eligendi perferendis saepe sunt.</p>
+                    </div>
+                    <div class="row mb-2">
+                        <div>
+                            Tags:
+                            <a href="#">Amberprice</a>
+                            <a href="#">Arcadia</a>
+                        </div>
+                    </div>
+
+                    {% for answer in answers %}
+
+                        <div class="media mt-3 mb-2">
+                            <!--<div class="row px-3">-->
+                                <div class="col-2">
+
+                                    <div class="row m-2">
+                                        <img src="{% static 'img/Arcadia64.jpg' %}" class="m-auto rounded" alt="...">
+                                    </div>
+
+                                    <div class="row m-2 border border-dark rounded">
+                                        <h3 class="m-auto">{{ answer.rating }}</h3>
+                                    </div>
+
+                                    <div class="row m-2">
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-secondary"><i class="far fa-thumbs-up"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-secondary"><i class="far fa-thumbs-down"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="media-body col-10 mt-1 mx-3">
+                                    <!--<div class="row">-->
+                                        <p>{{ answer.text }}</p>
+                                    <!--</div>/-->
+                                    <div class="row">
+                                        <div class="custom-control custom-checkbox ml-3">
+                                            <input type="checkbox" class="custom-control-input" id="customCheck00">
+                                            <label class="custom-control-label" for="customCheck00">Correct</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            <!--</div>-->
+                        </div>
+
+                    {%endfor%}
+
+                </div>
+            </div>
+        </div>
+
+
+        <form>
+            <div class="form-group">
+                <label for="textarea">Write a comment</label>
+                <textarea class="form-control" id="textarea" placeholder="Your Answer"></textarea>
+            </div>
+            <button class="btn btn-primary" type="submit"><a href="{%  url 'question' questions_id %}">Answer</a>
+            </button>
+        </form>
+
+    <!--</div>-->
+{% block pagination %}
+    {% include 'questions/include/pagination.html' %}
+{% endblock %}
+
+{% endblock %}
