@@ -42,6 +42,7 @@
 {% endblock %}
 
 {% block content %}
+
      {% for question in page_obj %}
         <!--Post-->
         <!--<div class="col-8">-->
@@ -49,10 +50,10 @@
             <!--<div class="row px-3">-->
                 <div class="col-2">
                     <div class="row m-2">
-                        <img src="{% static 'img/Arcadia64.jpg' %}" class="m-auto rounded" alt="...">
+                        <img src="/{{ question.author.avatar }}" class="m-auto rounded" alt="...">
                     </div>
 
-                    <div class="row m-2 mr-3 border border-dark rounded">
+                    <div class="row m-2 border border-dark rounded">
                         <h3 class="m-auto">{{ question.rating }}</h3>
                     </div>
 
@@ -65,17 +66,19 @@
                 </div>
 
                 <div class="media-body col-10 mt-1 mx-0">
-                    <div class="row">
+{#                    <div class="row">#}
                         <h5 class="mt-0">{{ question.title }}</h5>
-                        <p> {{ question.content }}</p>
-                    </div>
+                        <p> {{ question.text }}</p>
+{#                    </div>#}
                     <div class="row mb-2">
                         <div class="col-6">
-                             <a href="{% url 'question'  question.id  %}">Answer({{ question.answers }})</a>
+                             <a href="{% url 'question'  question.id  %}">Answer({{ question.ans_count }})</a>
                         </div>
                         <div class="col-6">
                             Tags:
-                           <a href="{% url 'tag' question.tag %}">{{ question.tag }}</a>
+                            {% for tag in question.tags.all %}
+                                <a href="{% url 'tag' tag.title %}">{{ tag.title }}</a>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>

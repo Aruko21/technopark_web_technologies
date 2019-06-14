@@ -34,14 +34,9 @@
             <div class="col-4">
                 <div class="container">
                     <h3> Popular tags </h3>
-                    <!--<a href="{% url 'tag' 'perl' %}" class="des">perl</a>-->
-                    <!--<a href="{% url 'tag' 'python' %}" class="with_out_line"><span class="Red">python</span></a>-->
-                    <!--<a href="{% url 'tag' 'Chloe' %}">Chloe</a>-->
-                    <!--<a href="{% url 'tag' 'Rachel' %}">Rachel</a>-->
-                    <a href="#">Amberprice</a>
-                    <a href="#">Max</a>
-                    <a href="#">Pricefield</a>
-                    <a href="#">Arcadia</a>
+                    {% for tag in tags %}
+                        <a href="{% url 'tag' tag.title %}">{{ tag.title }}</a>
+                    {% endfor %}
                 </div>
 
                 <div class="container">

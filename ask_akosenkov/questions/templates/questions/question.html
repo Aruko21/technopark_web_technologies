@@ -30,18 +30,18 @@
 
     <!--<div class="col-8">-->
         <div>
-            <h2 class="mt-2">Question Title</h2>
+            <h2 class="mt-2">{{ question.title }}</h2>
         </div>
         <div class="media my-2">
             <div class="row px-3">
                 <div class="col-2 ">
 
                     <div class="row m-2">
-                        <img src="{% static 'img/Chloe64.jpg' %}" class="m-auto rounded" alt="...">
+                        <img src="/{{ question.author.avatar }}" class="m-auto rounded" alt="...">
                     </div>
 
                     <div class="row m-2 border border-dark rounded">
-                        <h3 class="m-auto">4833</h3>
+                        <h3 class="m-auto">{{ question.rating }}</h3>
                     </div>
 
                     <div class="row m-2">
@@ -54,27 +54,25 @@
 
                 <div class="media-body col-10 mt-1 mx-0">
                     <div class="row">
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus corporis
-                            pariatur repellat repudiandae! Ad beatae, dolor ea eaque est hic illum impedit in
-                            ipsum minima, minus modi molestias nam quasi similique suscipit totam velit!
-                            Aperiam dolores eligendi perferendis saepe sunt.</p>
+                        <p>{{ question.text }}</p>
                     </div>
                     <div class="row mb-2">
                         <div>
                             Tags:
-                            <a href="#">Amberprice</a>
-                            <a href="#">Arcadia</a>
+                            {% for tag in question.tags.all %}
+                                <a href="{% url 'tag' tag.title %}">{{ tag.title }}</a>
+                            {% endfor %}
                         </div>
                     </div>
 
-                    {% for answer in answers %}
+                    {% for answer in page_obj %}
 
                         <div class="media mt-3 mb-2">
                             <!--<div class="row px-3">-->
                                 <div class="col-2">
 
                                     <div class="row m-2">
-                                        <img src="{% static 'img/Arcadia64.jpg' %}" class="m-auto rounded" alt="...">
+                                        <img src="/{{ answer.author.avatar }}" class="m-auto rounded" alt="...">
                                     </div>
 
                                     <div class="row m-2 border border-dark rounded">
@@ -117,7 +115,7 @@
                 <label for="textarea">Write a comment</label>
                 <textarea class="form-control" id="textarea" placeholder="Your Answer"></textarea>
             </div>
-            <button class="btn btn-primary" type="submit"><a href="{%  url 'question' questions_id %}">Answer</a>
+            <button class="btn btn-primary" type="submit">Answer</button>
             </button>
         </form>
 
