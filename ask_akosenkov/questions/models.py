@@ -84,10 +84,13 @@ class Like(models.Model):
     type = models.CharField(default=VOTE_TYPES[0][1], max_length=2, choices=VOTE_TYPES)
 
     user = models.ForeignKey(to=Profile, on_delete=models.CASCADE)
-    question = models.ForeignKey(to=Question, blank=True, on_delete=models.CASCADE)
-    answer = models.ForeignKey(to=Answer, blank=True, on_delete=models.CASCADE)
+    question = models.ForeignKey(to=Question, blank=True, null=True, on_delete=models.CASCADE)
+    answer = models.ForeignKey(to=Answer, blank=True, null=True, on_delete=models.CASCADE)
 
     # objects = LikeManager()
 
     def __str__(self):
         return self.type
+
+    class Meta:
+        unique_together = [['user', 'question'], ['user', 'answer']]

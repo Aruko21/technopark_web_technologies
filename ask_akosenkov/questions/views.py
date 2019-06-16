@@ -56,14 +56,14 @@ def index(request):
     quests_page = pagination(request.GET.get('page'), questions)
     tags = Tag.objects.sort_by_rating()[:20]
 
-    return render(request, 'questions/index.html', context={'page_obj': quests_page, 'tags': tags})
+    return render(request, 'questions/index.html', context={'object_list': quests_page, 'tags': tags})
 
 
 def hot(request):
     questions = Question.objects.sort_by_rating()
     quests_page = pagination(request.GET.get('page'), questions)
     tags = Tag.objects.sort_by_rating()[:20]
-    return render(request, "questions/hot.html", context={'page_obj': quests_page, 'tags': tags})
+    return render(request, "questions/hot.html", context={'object_list': quests_page, 'tags': tags})
 
 
 def ask(request):
@@ -78,9 +78,9 @@ def question(request, question_id):
         cur_question = None
 
     if cur_question is not None:
-        answers_page = pagination(request, Answer.objects.sort_by_datetime(question_id))
+        answers_page = pagination(request.GET.get('page'), Answer.objects.sort_by_datetime(question_id))
         tags = Tag.objects.sort_by_rating()[:20]
-        return render(request, "questions/question.html", context={'question': cur_question, 'page_obj': answers_page, 'tags': tags})
+        return render(request, "questions/question.html", context={'question': cur_question, 'object_list': answers_page, 'tags': tags})
     else:
         # raise - возбуждение исключения
         raise Http404("Following question doesn't exist!")
@@ -93,9 +93,9 @@ def tag(request, tag_name):
         cur_tag = None
 
     if cur_tag is not None:
-        quests_page = pagination(request, Question.objects.get_by_tag(tag_name))
+        quests_page = pagination(request.GET.get('page'), Question.objects.get_by_tag(tag_name))
         tags = Tag.objects.sort_by_rating()[:20]
-        return render(request, "questions/tag.html", context={'tag_name': tag_name, 'page_obj': quests_page, 'tags': tags})
+        return render(request, "questions/tag.html", context={'tag_name': tag_name, 'object_list': quests_page, 'tags': tags})
     else:
         raise Http404("Following tag doesn't exist!")
 

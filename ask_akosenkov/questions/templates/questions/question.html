@@ -65,7 +65,7 @@
                         </div>
                     </div>
 
-                    {% for answer in page_obj %}
+                    {% for answer in object_list %}
 
                         <div class="media mt-3 mb-2">
                             <!--<div class="row px-3">-->
@@ -104,7 +104,9 @@
                         </div>
 
                     {%endfor%}
-
+                    {% block pagination %}
+                        {% include 'questions/include/pagination.html' %}
+                    {% endblock %}
                 </div>
             </div>
         </div>
@@ -120,8 +122,5 @@
         </form>
 
     <!--</div>-->
-{% block pagination %}
-    {% include 'questions/include/pagination.html' %}
-{% endblock %}
 
 {% endblock %}
