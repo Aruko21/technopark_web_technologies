@@ -22,6 +22,23 @@ def pagination(page, object_list):
     return objects_page
 
 
+def scroll_answers(answer_id, question_id):
+    page_url = ''
+    page = 1
+    ans_find_id = 0
+    # После создания нового ответа нужно заново получить весь список ответов
+    answers_list = Answer.objects.sort_by_datetime(question_id)
+    ans_page = pagination(page, answers_list)
+    while ans_find_id != answer_id and page <= ans_page.paginator.num_pages:
+        ans_page = pagination(page, answers_list)
+        for ans in ans_page.object_list:
+            if ans.id == answer_id:
+                page_url = '?page=' + str(page)
+                break
+        page += 1
+    return page_url
+
+
 def index(request):
     # Чтобы не использовать один и тот же код много раз- можно использовать Middleware
     questions = Question.objects.sort_by_datetime()
@@ -73,8 +90,13 @@ def question(request, question_id):
             if request.method == 'POST':
                 form = AnswerForm(request.POST, profile=request.profile, question=cur_question)
                 if form.is_valid():
-                    form.save()
-                    url = "/question/" + str(cur_question.id)
+                    answer = form.save()
+                    if answers_page.has_other_pages():
+                        page_url = scroll_answers(answer.id, question_id)
+                    else:
+                        page_url = ''
+
+                    url = "/question/" + str(cur_question.id) + '/' + page_url + '#ans' + str(answer.id)
                     return HttpResponseRedirect(url)
             else:
                 form = AnswerForm(profile=request.profile, question=cur_question)

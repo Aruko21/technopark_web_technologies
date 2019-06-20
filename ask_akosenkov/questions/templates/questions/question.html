@@ -3,13 +3,25 @@
 
 {% block content %}
 
-    <!--<div class="col-8">-->
-        <div>
-            <h2 class="mt-2">{{ question.title }}</h2>
-        </div>
+{#    Информация на будущее о том, как правильно прикреплять текст к низу какого-либо блока:#}
+{#    Для того, чтобы иметь возможность присоединть элементы к краям блока - нужно использовать соответвующие#}
+{#    margin отступ со значением auto. Т.е. в случае, если нужно прикрепить текст к низу - указываем у блока#}
+{#    текста класс mt-auto (margin-top: auto) - тогда браузер сможет сам проставлять нужное значение margin'a#}
+{#    для того, чтобы нижний элемент имел нужный отступ от предыдущего.#}
+{#    Для работы знаечния auto требуется значение display - flex. Но при использовании данного display возникает#}
+{#    ряд проблем. Flex будет отключен, и, следовательно, не будет работать m-auto, если хотя бы один родительский#}
+{#    блок не имеет display-flex. => нужно следить за иерархией flex.#}
+{#    Также, при указании нового режима отображения все блочные элементы приобретают новые свойства и уже не занимают#}
+{#    всю ширину блока, даже если им это явно указать. Для решения этой проблемы использовать flex-direction: column - #}
+{#    тогда все блочные элементы будут выстраиваться в колонку внутри флекса с данным атрибутом.#}
+{#    Наконец, чтобы прикрепить текст к низу блока - нужно указать height: 100% у нужного родительского блока.#}
+{#    Причем! Нужно соблюдать такую же иерархию, как и в случае с flex.#}
+    <div>
+        <h2 class="mt-2">{{ question.title }}</h2>
+    </div>
+    <div class="container vertical_align">
         <div class="row media my-2">
             <div class="col-2 ">
-
                 <div class="row m-2">
                     <img src="{{ question.author.avatar.url }}" class="m-auto rounded" width="64" height="64" alt="...">
                 </div>
@@ -17,7 +29,6 @@
                 <div class="row m-2 border border-dark rounded">
                     <h3 class="m-auto">{{ question.rating }}</h3>
                 </div>
-
                 <div class="row m-2">
                     <div class="btn-group">
                         <button type="button" class="btn btn-secondary"><i class="far fa-thumbs-up"></i></button>
@@ -25,17 +36,32 @@
                     </div>
                 </div>
             </div>
-{#                D-FLEX В ПАРЕ С MT-AUTO ДАЮТ НУЖНЫЙ ЭФФЕКТ ФУТЕРА#}
             <div class="col-10 media-body mt-1 mx-0 h-100 ">
-                <div class="row px-3">
-                    <p>{{ question.text }}</p>
-                </div>
-                <div class="mb-2 mt-auto pb-2 border-bottom">
-                    <div class="text-right">
-                        Tags:
-                        {% for tag in question.tags.all %}
-                            <a href="{% url 'tag' tag.title %}">{{ tag.title }}</a>
-                        {% endfor %}
+                <div class="container vertical_align h-100">
+                    <div class="row">
+                        <p class="text-break">{{ question.text }}</p>
+                    </div>
+                    <div class="row mt-auto border-bottom mb-2">
+                        <div class="col-5">
+                            <div class="row text-secondary">
+                                {{ question.author.user.username }} asked
+                            </div>
+                            <div class="row pb-2">
+                                <div class="text-secondary">
+                                    {{ question.date }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-7">
+                            <div class="row mt-auto">
+                                <div class="ml-auto pb-2 text-right">
+                                    Tags:
+                                    {% for tag in question.tags.all %}
+                                        <a href="{% url 'tag' tag.title %}">{{ tag.title }}</a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -48,8 +74,10 @@
                 <h4 class="mt-2 pl-4">Be the first!</h4>
             </div>
         {% endif %}
+    </div>
 
-        {% for answer in object_list %}
+    {% for answer in object_list %}
+        <div class="container vertical_align" id="ans{{ answer.id }}">
             <div class="row media my-2">
                 <div class="col-2">
                     <div class="row m-2">
@@ -70,23 +98,28 @@
                     </div>
                 </div>
                 <div class="col-10 media-body mt-1 h-100">
-                    <div class="border-top mb-2"></div>
-                    <div class="row px-3">
-                        <p>{{ answer.text }}</p>
-                    </div>
-                    <div class="row mt-auto mb-2 px-3">
-                        <div class="text-secondary">
-                            {{ answer.date }}
+                    <div class="container vertical_align border-top pt-2 h-100">
+                        <div class="row">
+                            <p class="text-break">{{ answer.text }}</p>
                         </div>
-                        <div class="ml-auto custom-control custom-checkbox ml-3">
-                            <label class="custom-control-label" for="customCheck00">Correct</label>
-                            <input type="checkbox" class="custom-control-input" id="customCheck00">
+                        <div class="row mt-auto text-secondary">
+                            {{ answer.author.user.username }} at
+                        </div>
+                        <div class="row mb-2 pb-2 border-bottom">
+                            <div class="text-secondary">
+                                {{ answer.date }}
+                            </div>
+                            <div class="ml-auto custom-control custom-checkbox ml-3">
+                                <label class="custom-control-label" for="customCheck00">Correct</label>
+                                <input type="checkbox" class="custom-control-input" id="customCheck00">
+                            </div>
                         </div>
                     </div>
-                    <div class="border-bottom mb-2"></div>
                 </div>
             </div>
-        {% endfor %}
+        </div>
+    {% endfor %}
+    <div class="container vertical_align">
         {% block pagination %}
             <div class="pt-3 border-top">
                 {% include 'questions/include/pagination.html' %}
@@ -97,7 +130,7 @@
                 {{ error }}
             </div>
         {% endfor %}
-        <div class="pl-2">
+        <div>
             {% if is_auth %}
                 <form method="post" action="{% url 'question' question.id %}">
                     {% csrf_token %}
@@ -119,7 +152,6 @@
                 <a class="btn btn-outline-primary" href="{% url 'login' %}?continue={{ request.path|urlencode }}">Sign In</a>
             {% endif %}
         </div>
-
-    <!--</div>-->
+    </div>
 
 {% endblock %}

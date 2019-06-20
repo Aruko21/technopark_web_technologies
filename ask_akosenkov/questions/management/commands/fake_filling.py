@@ -31,7 +31,10 @@ class Command(BaseCommand):
             random_user = User(username=fake.name(), email=fake.email())
             random_user.set_password("MissArcadia")
             random_user.save()
-            random_profile = Profile(user=random_user)
+            random_avatar = random.randint(1, 12)
+            # Адрес картинки пишется относительно media
+            avatar_url = '/default/avs/' + str(random_avatar) + '.png'
+            random_profile = Profile(user=random_user, avatar=avatar_url)
             random_profile.save()
 
         print("creating tags...")
@@ -44,7 +47,8 @@ class Command(BaseCommand):
 
         print("creating questions...")
         for i in range(count_quests):
-            print('creating question ', i, '')
+            print('creating question ', i + 1, ' of ', count_quests, end='')
+            print('\r', end='')
             random_profile = random.choice(profiles)
             random_question = Question(title=fake.sentence(), text=fake.text(), author=random_profile)
             random_question.save()
@@ -67,6 +71,8 @@ class Command(BaseCommand):
 
         print("creating answers...")
         for i in range(count_answers):
+            print('creating answer ', i + 1, ' of ', count_answers, end='')
+            print('\r', end='')
             random_profile = random.choice(profiles)
             random_question = random.choice(questions)
             random_answer = Answer(text=fake.text(), author=random_profile, question=random_question)
@@ -86,6 +92,9 @@ class Command(BaseCommand):
             random.shuffle(list(profiles))
             current_likes = 0
             for i in range(random_rating):
+                if i % 10 == 0:
+                    print('creating vote ', i + 1, ' of ', count_votes, end='')
+                    print('\r', end='')
                 question_or_answer = random.randint(0, 1)
                 random_profile = random.choice(profiles)
                 if question_or_answer == 0:
@@ -131,4 +140,4 @@ class Command(BaseCommand):
                         pass
                     random_answer.save()
 
-        print("done")
+        print("\ndone")
