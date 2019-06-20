@@ -28,7 +28,8 @@ class Command(BaseCommand):
 
         print("creating profiles...")
         for i in range(count_users):
-            random_user = User(username=fake.name(), email=fake.email(), password='111')
+            random_user = User(username=fake.name(), email=fake.email())
+            random_user.set_password("MissArcadia")
             random_user.save()
             random_profile = Profile(user=random_user)
             random_profile.save()

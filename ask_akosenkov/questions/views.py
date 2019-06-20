@@ -1,41 +1,13 @@
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.shortcuts import render
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseRedirect
+from django.contrib import auth
+from django import conf
+from questions.forms import *
+from django.contrib.auth.decorators import login_required
+from questions.middleware import CheckProfileMiddleware
 
 from questions.models import *
-
-# questions = []
-# for i in range(1, 22):
-#     questions.append({
-#         'title': 'title '+str(i),
-#         'id': i,
-#         'content': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Maiores, sequi?'+str(i),
-#         'answers': i + 6,
-#         'rating': i * 100,
-#         'tag': 'tag' + str(i),
-#     }
-#     )
-#
-# answers = []
-# for i in range(1, 10):
-#     answers.append({
-#         'id': i,
-#         'text': 'text '+str(i),
-#         'rating': i * 100,
-#     }
-#     )
-#
-# hot_questions = []
-# for i in range(1, 20):
-#     hot_questions.append({
-#         'title': 'title '+str(i),
-#         'id': i,
-#         'com': 'text '+str(i),
-#         'answers': i + 6,
-#         'rating': i * 100,
-#         'tag': 'hot_tag' + str(i),
-#     }
-#     )
 
 
 def pagination(page, object_list):
@@ -50,25 +22,40 @@ def pagination(page, object_list):
     return objects_page
 
 
-# Все файлы ищутся относительно папки templates!
 def index(request):
+    # Чтобы не использовать один и тот же код много раз- можно использовать Middleware
     questions = Question.objects.sort_by_datetime()
     quests_page = pagination(request.GET.get('page'), questions)
     tags = Tag.objects.sort_by_rating()[:20]
-
-    return render(request, 'questions/index.html', context={'object_list': quests_page, 'tags': tags})
+    # print("second yo")
+    return render(request, 'questions/index.html', context={'object_list': quests_page, 'tags': tags,
+                                                            'user': request.profile, 'name': request.username})
 
 
 def hot(request):
+    # prof, username = load_profile(request)
     questions = Question.objects.sort_by_rating()
     quests_page = pagination(request.GET.get('page'), questions)
     tags = Tag.objects.sort_by_rating()[:20]
-    return render(request, "questions/hot.html", context={'object_list': quests_page, 'tags': tags})
+    return render(request, "questions/hot.html", context={'object_list': quests_page, 'tags': tags,
+                                                          'user': request.profile, 'name': request.username})
 
 
 def ask(request):
-    tags = Tag.objects.sort_by_rating()[:20]
-    return render(request, "questions/ask.html", context={'tags': tags})
+    if request.user.is_authenticated:
+        tags = Tag.objects.sort_by_rating()[:20]
+        if request.method == 'POST':
+            form = QuestionForm(request.POST, profile=request.profile)
+            if form.is_valid():
+                quest = form.save()
+                url = "/question/" + str(quest.id)
+                return HttpResponseRedirect(url)
+        else:
+            form = QuestionForm(profile=request.profile)
+            return render(request, "questions/ask.html", context={'tags': tags, 'form': form,
+                                                                  'user': request.profile, 'name': request.username})
+    else:
+        return HttpResponseRedirect('%s?continue=%s' % (conf.settings.LOGIN_URL, request.path))
 
 
 def question(request, question_id):
@@ -78,9 +65,20 @@ def question(request, question_id):
         cur_question = None
 
     if cur_question is not None:
+
         answers_page = pagination(request.GET.get('page'), Answer.objects.sort_by_datetime(question_id))
         tags = Tag.objects.sort_by_rating()[:20]
-        return render(request, "questions/question.html", context={'question': cur_question, 'object_list': answers_page, 'tags': tags})
+        if request.method == 'POST':
+            form = AnswerForm(request.POST, profile=request.profile, question=cur_question)
+            if form.is_valid():
+                form.save()
+                url = "/question/" + str(cur_question.id)
+                return HttpResponseRedirect(url)
+        else:
+            form = AnswerForm(profile=request.profile, question=cur_question)
+            return render(request, "questions/question.html", context={'question': cur_question, 'form': form,
+                                                                       'object_list': answers_page, 'tags': tags,
+                                                                        'user': request.profile, 'name': request.username})
     else:
         # raise - возбуждение исключения
         raise Http404("Following question doesn't exist!")
@@ -93,24 +91,88 @@ def tag(request, tag_name):
         cur_tag = None
 
     if cur_tag is not None:
+        # prof, username = load_profile(request)
         quests_page = pagination(request.GET.get('page'), Question.objects.get_by_tag(tag_name))
         tags = Tag.objects.sort_by_rating()[:20]
-        return render(request, "questions/tag.html", context={'tag_name': tag_name, 'object_list': quests_page, 'tags': tags})
+        return render(request, "questions/tag.html", context={'tag_name': tag_name, 'object_list': quests_page,
+                                                              'tags': tags, 'user': request.profile,
+                                                              'name': request.username})
     else:
         raise Http404("Following tag doesn't exist!")
 
 
 def login(request):
     tags = Tag.objects.sort_by_rating()[:20]
-    return render(request, "questions/login.html", context={'tags': tags})
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        url = request.POST.get('continue', '/')
+        if form.is_valid():
+            user = form.user
+            # print("yo")
+            auth.login(request, user)
+            # print("yo yo")
+            if url == conf.settings.LOGIN_URL or url == '/signup/':
+                url = '/'
+            return HttpResponseRedirect(url)
+    else:
+        # unbound форма
+        form = LoginForm()
+        url = request.GET.get('continue', '/')
+    return render(request, "questions/login.html", context={'tags': tags, 'form': form,
+                                                            'user': None, 'name': None, 'continue_url': url})
+
+
+def logout(request):
+    auth.logout(request)
+    return HttpResponseRedirect(request.GET.get('continue'))
 
 
 def signup(request):
     tags = Tag.objects.sort_by_rating()[:20]
-    return render(request, "questions/signup.html", context={'tags': tags})
+    if request.method == 'POST':
+        form = RegisterForm(request.POST, request.FILES)
+        url = request.POST.get('continue', '/')
+        # print('heeeey')
+        if form.is_valid():
+            # print('yo')
+            form.save()
+            auth.login(request, form.user)
+            return HttpResponseRedirect(url)
+    else:
+        form = RegisterForm()
+        url = request.GET.get('continue', '/')
+    return render(request, "questions/signup.html", context={'tags': tags, 'form': form, 'continue_url': url,
+                                                             'user': None, 'name': None})
 
 
 def settings(request):
-    tags = Tag.objects.sort_by_rating()[:20]
-    return render(request, "questions/settings.html", context={'tags': tags})
+    if request.user.is_authenticated:
+        tags = Tag.objects.sort_by_rating()[:20]
+        message = ''
+        code = None
+        if request.method == 'POST':
+            # request передаем, чтобы перезалогинить пользователя в случае смены пароля
+            form = SettingsForm(request.POST, request.FILES, user=request.user, request=request,
+                                initial={'username': request.user.username, 'first_name': request.user.first_name,
+                                         'last_name': request.user.last_name})
+            if form.is_valid():
+                form.save()
+                message = 'Changing success'
+                code = 'OK'
+                # Нужно обновить информацию об аватарке и нике юзера. Та, что была получена через
+                # middleware ранее - уже неактуальна. Так пользователь сможет сразу увидеть изменения
+                CheckProfileMiddleware.process_request(CheckProfileMiddleware(None), request)
+            else:
+                message = 'Changing failed'
+                code = 'FAIL'
+        else:
+            form = SettingsForm(user=request.user, request=request,
+                                initial={'username': request.user.username, 'first_name': request.user.first_name,
+                                         'last_name': request.user.last_name})
+        return render(request, "questions/settings.html", context={'tags': tags, 'user': request.profile, 'form': form,
+                                                                   'message': message, 'code': code,
+                                                                   'name': request.username})
+    else:
+        return HttpResponseRedirect('%s?continue=%s' % (conf.settings.LOGIN_URL, request.path))
+
 

@@ -1,31 +1,6 @@
 {% extends 'questions/base.html' %}
 {% load static %}
 
-{% block nav %}
-
-    <nav class="navbar navbar-light bg-light ">
-        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="{% url 'index' %}">Ask Chloe</a>
-
-        <ul class="nav justify-content-end">
-
-            <form class="form-inline mt-2 mt-md-0">
-                <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-                <a type="button" class="btn btn-outline-primary mx-1" name="asking" id="ask" autocomplete="off"
-                   href="{% url 'ask' %}"> Ask! </a>
-            </form>
-
-            <li class="nav-item dropdown ">
-                <a class="nav-link" href="{% url 'login' %}">Sign In</a>
-            </li>
-            <li>
-                <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
-            </li>
-        </ul>
-    </nav>
-
-{% endblock %}
-
 {% block content %}
 
     <!--<div class="col-8">-->
@@ -33,11 +8,11 @@
             <h2 class="mt-2">{{ question.title }}</h2>
         </div>
         <div class="media my-2">
-            <div class="row px-3">
+{#            <div class="row px-3">#}
                 <div class="col-2 ">
 
                     <div class="row m-2">
-                        <img src="/{{ question.author.avatar }}" class="m-auto rounded" alt="...">
+                        <img src="{{ question.author.avatar.url }}" class="m-auto rounded" width="64" height="64" alt="...">
                     </div>
 
                     <div class="row m-2 border border-dark rounded">
@@ -51,13 +26,13 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="media-body col-10 mt-1 mx-0">
+{#                D-FLEX В ПАРЕ С MT-AUTO ДАЮТ НУЖНЫЙ ЭФФЕКТ ФУТЕРА#}
+                <div class="media-body col-10 mt-1 mx-0 h-100">
                     <div class="row">
                         <p>{{ question.text }}</p>
                     </div>
-                    <div class="row mb-2">
-                        <div>
+                    <div class="mb-2 ">
+                        <div class="text-right">
                             Tags:
                             {% for tag in question.tags.all %}
                                 <a href="{% url 'tag' tag.title %}">{{ tag.title }}</a>
@@ -72,7 +47,7 @@
                                 <div class="col-2">
 
                                     <div class="row m-2">
-                                        <img src="/{{ answer.author.avatar }}" class="m-auto rounded" alt="...">
+                                        <img src="{{ answer.author.avatar.url }}" class="m-auto rounded" width="64" height="64" alt="...">
                                     </div>
 
                                     <div class="row m-2 border border-dark rounded">
@@ -90,9 +65,9 @@
                                 </div>
 
                                 <div class="media-body col-10 mt-1 mx-3">
-                                    <!--<div class="row">-->
+                                    <div class="row">
                                         <p>{{ answer.text }}</p>
-                                    <!--</div>/-->
+                                    </div>
                                     <div class="row">
                                         <div class="custom-control custom-checkbox ml-3">
                                             <input type="checkbox" class="custom-control-input" id="customCheck00">
@@ -108,17 +83,29 @@
                         {% include 'questions/include/pagination.html' %}
                     {% endblock %}
                 </div>
-            </div>
+{#            </div>#}
         </div>
 
-
-        <form>
-            <div class="form-group">
-                <label for="textarea">Write a comment</label>
-                <textarea class="form-control" id="textarea" placeholder="Your Answer"></textarea>
+        {% for error in form.non_field_errors %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
             </div>
+        {% endfor %}
+
+        <form method="post" action="{% url 'question' question.id %}">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    <label >{{ field.label }}</label>
+                    {{ field }}
+                    {% for error in field.errors %}
+                             <div class="invalid-feedback d-block">
+                                 {{ error }}
+                             </div>
+                         {% endfor %}
+                </div>
+            {% endfor %}
             <button class="btn btn-primary" type="submit">Answer</button>
-            </button>
         </form>
 
     <!--</div>-->

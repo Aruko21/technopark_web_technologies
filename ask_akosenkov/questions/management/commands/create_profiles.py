@@ -19,7 +19,8 @@ class Command(BaseCommand):
         count = kwargs['count']
 
         for i in range(count):
-            random_user = User(username=fake.name(), email=fake.email(), password='111')
+            random_user = User(username=fake.name(), email=fake.email())
+            random_user.set_password("MissArcadia")
             random_user.save()
             random_profile = Profile(user=random_user)
             random_profile.save()
