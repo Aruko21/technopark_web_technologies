@@ -7,106 +7,118 @@
         <div>
             <h2 class="mt-2">{{ question.title }}</h2>
         </div>
-        <div class="media my-2">
-{#            <div class="row px-3">#}
-                <div class="col-2 ">
+        <div class="row media my-2">
+            <div class="col-2 ">
 
+                <div class="row m-2">
+                    <img src="{{ question.author.avatar.url }}" class="m-auto rounded" width="64" height="64" alt="...">
+                </div>
+
+                <div class="row m-2 border border-dark rounded">
+                    <h3 class="m-auto">{{ question.rating }}</h3>
+                </div>
+
+                <div class="row m-2">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-secondary"><i class="far fa-thumbs-up"></i></button>
+                        <button type="button" class="btn btn-secondary"><i class="far fa-thumbs-down"></i></button>
+                    </div>
+                </div>
+            </div>
+{#                D-FLEX В ПАРЕ С MT-AUTO ДАЮТ НУЖНЫЙ ЭФФЕКТ ФУТЕРА#}
+            <div class="col-10 media-body mt-1 mx-0 h-100 ">
+                <div class="row px-3">
+                    <p>{{ question.text }}</p>
+                </div>
+                <div class="mb-2 mt-auto pb-2 border-bottom">
+                    <div class="text-right">
+                        Tags:
+                        {% for tag in question.tags.all %}
+                            <a href="{% url 'tag' tag.title %}">{{ tag.title }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h3 class="mt-2">Answers:</h3>
+        </div>
+        {% if question.ans_count == 0 %}
+            <div>
+                <h4 class="mt-2 pl-4">Be the first!</h4>
+            </div>
+        {% endif %}
+
+        {% for answer in object_list %}
+            <div class="row media my-2">
+                <div class="col-2">
                     <div class="row m-2">
-                        <img src="{{ question.author.avatar.url }}" class="m-auto rounded" width="64" height="64" alt="...">
+                        <img src="{{ answer.author.avatar.url }}" class="m-auto rounded" width="64" height="64" alt="...">
                     </div>
 
                     <div class="row m-2 border border-dark rounded">
-                        <h3 class="m-auto">{{ question.rating }}</h3>
+                        <h3 class="m-auto">{{ answer.rating }}</h3>
                     </div>
 
                     <div class="row m-2">
                         <div class="btn-group">
-                            <button type="button" class="btn btn-secondary"><i class="far fa-thumbs-up"></i></button>
-                            <button type="button" class="btn btn-secondary"><i class="far fa-thumbs-down"></i></button>
+                            <button type="button" class="btn btn-secondary"><i class="far fa-thumbs-up"></i>
+                            </button>
+                            <button type="button" class="btn btn-secondary"><i class="far fa-thumbs-down"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
-{#                D-FLEX В ПАРЕ С MT-AUTO ДАЮТ НУЖНЫЙ ЭФФЕКТ ФУТЕРА#}
-                <div class="media-body col-10 mt-1 mx-0 h-100">
-                    <div class="row">
-                        <p>{{ question.text }}</p>
+                <div class="col-10 media-body mt-1 h-100">
+                    <div class="border-top mb-2"></div>
+                    <div class="row px-3">
+                        <p>{{ answer.text }}</p>
                     </div>
-                    <div class="mb-2 ">
-                        <div class="text-right">
-                            Tags:
-                            {% for tag in question.tags.all %}
-                                <a href="{% url 'tag' tag.title %}">{{ tag.title }}</a>
-                            {% endfor %}
+                    <div class="row mt-auto mb-2 px-3">
+                        <div class="text-secondary">
+                            {{ answer.date }}
+                        </div>
+                        <div class="ml-auto custom-control custom-checkbox ml-3">
+                            <label class="custom-control-label" for="customCheck00">Correct</label>
+                            <input type="checkbox" class="custom-control-input" id="customCheck00">
                         </div>
                     </div>
-
-                    {% for answer in object_list %}
-
-                        <div class="media mt-3 mb-2">
-                            <!--<div class="row px-3">-->
-                                <div class="col-2">
-
-                                    <div class="row m-2">
-                                        <img src="{{ answer.author.avatar.url }}" class="m-auto rounded" width="64" height="64" alt="...">
-                                    </div>
-
-                                    <div class="row m-2 border border-dark rounded">
-                                        <h3 class="m-auto">{{ answer.rating }}</h3>
-                                    </div>
-
-                                    <div class="row m-2">
-                                        <div class="btn-group">
-                                            <button type="button" class="btn btn-secondary"><i class="far fa-thumbs-up"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-secondary"><i class="far fa-thumbs-down"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="media-body col-10 mt-1 mx-3">
-                                    <div class="row">
-                                        <p>{{ answer.text }}</p>
-                                    </div>
-                                    <div class="row">
-                                        <div class="custom-control custom-checkbox ml-3">
-                                            <input type="checkbox" class="custom-control-input" id="customCheck00">
-                                            <label class="custom-control-label" for="customCheck00">Correct</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            <!--</div>-->
-                        </div>
-
-                    {%endfor%}
-                    {% block pagination %}
-                        {% include 'questions/include/pagination.html' %}
-                    {% endblock %}
+                    <div class="border-bottom mb-2"></div>
                 </div>
-{#            </div>#}
-        </div>
-
+            </div>
+        {% endfor %}
+        {% block pagination %}
+            <div class="pt-3 border-top">
+                {% include 'questions/include/pagination.html' %}
+            </div>
+        {% endblock %}
         {% for error in form.non_field_errors %}
             <div class="alert alert-danger" role="alert">
                 {{ error }}
             </div>
         {% endfor %}
-
-        <form method="post" action="{% url 'question' question.id %}">
-            {% csrf_token %}
-            {% for field in form %}
-                <div class="form-group">
-                    <label >{{ field.label }}</label>
-                    {{ field }}
-                    {% for error in field.errors %}
-                             <div class="invalid-feedback d-block">
-                                 {{ error }}
-                             </div>
-                         {% endfor %}
-                </div>
-            {% endfor %}
-            <button class="btn btn-primary" type="submit">Answer</button>
-        </form>
+        <div class="pl-2">
+            {% if is_auth %}
+                <form method="post" action="{% url 'question' question.id %}">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="form-group">
+                            <label >{{ field.label }}</label>
+                            {{ field }}
+                            {% for error in field.errors %}
+                                 <div class="invalid-feedback d-block">
+                                     {{ error }}
+                                 </div>
+                             {% endfor %}
+                        </div>
+                    {% endfor %}
+                    <button class="btn btn-primary" type="submit">Answer</button>
+                </form>
+            {% else %}
+                <h3>You need to sign in before leaving answers.</h3>
+                <a class="btn btn-outline-primary" href="{% url 'login' %}?continue={{ request.path|urlencode }}">Sign In</a>
+            {% endif %}
+        </div>
 
     <!--</div>-->
 

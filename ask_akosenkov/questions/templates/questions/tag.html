@@ -9,11 +9,11 @@
 
     {% for question in object_list %}
     <!--Post-->
-        <div class="media my-2 border border-dark rounded">
-            <!--<div class="row px-3">-->
+        <div class="container vertical_align">
+            <div class="row media my-2 border border-dark rounded">
                 <div class="col-2">
                     <div class="row m-2">
-                        <img src="{{ question.author.avatar.url }}" class="my-auto ml-2 rounded" alt="...">
+                        <img src="{{ question.author.avatar.url }}" class="m-auto rounded" width="64" height="64" alt="...">
                     </div>
 
                     <div class="row m-2 border border-dark rounded">
@@ -28,26 +28,31 @@
                     </div>
                 </div>
 
-                <div class="media-body col-10 mt-1 mx-0">
-{#                    <div class="row">#}
-                        <h5 class="mt-0">{{ question.title }}</h5>
-                        <p> {{ question.text }}</p>
-{#                    </div>#}
-                    <div class="row mb-2">
-                        <div class="col-6">
-                             <a href="{% url 'question' question.id  %}">Answer({{ question.ans_count }})</a>
+                <div class="col-10 media-body mt-1 mx-0 h-100">
+                    <div class="container vertical_align h-100">
+                        <div class="row">
+                            <h5 class="mt-0">{{ question.title }}</h5>
                         </div>
-                        <div class="col-6">
-                            Tags:
-                            {% for tag in question.tags.all %}
-                                <a href="{% url 'tag' tag.title %}">{{ tag.title }}</a>
-                            {% endfor %}
+                        <div class="row">
+                            <p>{{ question.text }}</p>
+                        </div>
+                        <div class="row mt-auto mb-2">
+                            <div>
+                                 <a href="{% url 'question' question.id %}">Answer({{ question.ans_count }})</a>
+                            </div>
+                            <div class="ml-auto mb-2 pb-2">
+                                <div class="text-right">
+                                    Tags:
+                                    {% for tag in question.tags.all %}
+                                        <a href="{% url 'tag' tag.title %}">{{ tag.title }}</a>
+                                    {% endfor %}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            <!--</div>-->
+            </div>
         </div>
-    <!---->
     {% endfor %}
 
 

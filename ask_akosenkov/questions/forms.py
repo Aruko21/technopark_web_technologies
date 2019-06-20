@@ -88,7 +88,7 @@ class QuestionForm(forms.Form):
 class AnswerForm(forms.Form):
     body = forms.CharField(label='Your answer', max_length=1024,
                            widget=forms.Textarea(attrs={'placeholder': "Type your answer here",
-                                                        'class': "form-control"}))
+                                                        'rows': '5', 'class': "form-control"}))
 
     def __init__(self, *args, **kwargs):
         self.profile = kwargs.pop('profile')

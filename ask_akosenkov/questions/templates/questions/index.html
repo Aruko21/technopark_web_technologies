@@ -2,44 +2,6 @@
 <!--ВАЖНО!-->
 {% load static %}
 
-
-{% block nav %}
-
-    <nav class="navbar navbar-light bg-light ">
-        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="{% url 'index' %}">Ask Chloe</a>
-
-        <ul class="nav justify-content-end">
-
-            <form class="form-inline mt-2 mt-md-0">
-                <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-                <a type="button" class="btn btn-outline-primary mx-1" name="asking" id="ask" autocomplete="off" href="{% url 'ask' %}"> Ask! </a>
-            </form>
-            {% if user is not None %}
-                <li class="nav-item dropdown ">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-                       aria-haspopup="true" aria-expanded="false">
-                    <img src="{{ user.avatar.url }}" class="rounded-circle"> {{ name }}
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="{% url 'settings' %}">Settings</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{% url 'logout' %}?continue={{ request.path|urlencode }}">Log Out</a>
-                    </div>
-                </li>
-            {% else %}
-                <li class="nav-item dropdown ">
-                    <a class="nav-link" href="{% url 'login' %}?continue={{ request.path|urlencode }}">Sign In</a>
-                </li>
-                <li>
-                    <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
-                </li>
-            {% endif %}
-        </ul>
-    </nav>
-
-{% endblock %}
-
 {% block all_hot %}
 
 	<div class="container my-2">
@@ -55,9 +17,10 @@
 
     {% for question in object_list %}
         <!--Post-->
-        <!--<div class="col-8">-->
-        <div class="media my-2 border border-dark rounded">
-            <!--<div class="row px-3">-->
+{#        NOTE: У row значение padding - отрицательное, поэтому row перекрывает padding, который устанавливает col#}
+{#        Для корректой работы с row - их надо оборачивать в container#}
+        <div class="container vertical_align">
+            <div class="row media my-2 border border-dark rounded">
                 <div class="col-2">
                     <div class="row m-2">
                         <img src="{{ question.author.avatar.url }}" class="m-auto rounded" width="64" height="64" alt="...">
@@ -75,26 +38,31 @@
                     </div>
                 </div>
 
-                <div class="media-body col-10 mt-1 mx-0">
-                    <!--<div class="row">-->
-                        <h5 class="mt-0">{{ question.title }}</h5>
-                        <p>{{ question.text }}</p>
-                    <!--</div>-->
-                    <div class="row mb-2">
-                        <div class="col-6">
-                             <a href="{% url 'question' question.id %}">Answer({{ question.ans_count }})</a>
+                <div class="col-10 media-body mt-1 mx-0 h-100">
+                    <div class="container vertical_align h-100">
+                        <div class="row">
+                            <h5 class="mt-0">{{ question.title }}</h5>
                         </div>
-                        <div class="col-6">
-                            Tags:
-                            {% for tag in question.tags.all %}
-                                <a href="{% url 'tag' tag.title %}">{{ tag.title }}</a>
-                            {% endfor %}
+                        <div class="row">
+                            <p>{{ question.text }}</p>
+                        </div>
+                        <div class="row mt-auto mb-2">
+                            <div>
+                                 <a href="{% url 'question' question.id %}">Answer({{ question.ans_count }})</a>
+                            </div>
+                            <div class="ml-auto mb-2 pb-2">
+                                <div class="text-right">
+                                    Tags:
+                                    {% for tag in question.tags.all %}
+                                        <a href="{% url 'tag' tag.title %}">{{ tag.title }}</a>
+                                    {% endfor %}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            <!--</div>-->
+            </div>
         </div>
-        <!--</div>-->
         <!---->
     {% endfor %}
     {% block pagination %}

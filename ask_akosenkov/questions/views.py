@@ -68,17 +68,22 @@ def question(request, question_id):
 
         answers_page = pagination(request.GET.get('page'), Answer.objects.sort_by_datetime(question_id))
         tags = Tag.objects.sort_by_rating()[:20]
-        if request.method == 'POST':
-            form = AnswerForm(request.POST, profile=request.profile, question=cur_question)
-            if form.is_valid():
-                form.save()
-                url = "/question/" + str(cur_question.id)
-                return HttpResponseRedirect(url)
+        if request.user.is_authenticated:
+            is_auth = True
+            if request.method == 'POST':
+                form = AnswerForm(request.POST, profile=request.profile, question=cur_question)
+                if form.is_valid():
+                    form.save()
+                    url = "/question/" + str(cur_question.id)
+                    return HttpResponseRedirect(url)
+            else:
+                form = AnswerForm(profile=request.profile, question=cur_question)
         else:
-            form = AnswerForm(profile=request.profile, question=cur_question)
-            return render(request, "questions/question.html", context={'question': cur_question, 'form': form,
-                                                                       'object_list': answers_page, 'tags': tags,
-                                                                        'user': request.profile, 'name': request.username})
+            is_auth = False
+            form = None
+        return render(request, "questions/question.html", context={'question': cur_question, 'form': form, 'is_auth': is_auth,
+                                                                   'object_list': answers_page, 'tags': tags,
+                                                                   'user': request.profile, 'name': request.username})
     else:
         # raise - возбуждение исключения
         raise Http404("Following question doesn't exist!")

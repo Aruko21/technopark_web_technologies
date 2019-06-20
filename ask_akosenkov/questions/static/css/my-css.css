@@ -1,0 +1,8 @@
+.row > [class*='col-'] {
+	 display: flex;
+	 flex-direction: column;
+}
+[class*='col-'] .container.vertical_align {
+	 display: flex;
+	 flex-direction: column;
+}
