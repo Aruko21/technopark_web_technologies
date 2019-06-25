@@ -86,7 +86,7 @@ class Like(models.Model):
         (DISLIKE, '-'),
     )
 
-    type = models.CharField(default=VOTE_TYPES[0][1], max_length=2, choices=VOTE_TYPES)
+    type = models.CharField(default=LIKE, max_length=2, choices=VOTE_TYPES)
 
     user = models.ForeignKey(to=Profile, on_delete=models.CASCADE)
     question = models.ForeignKey(to=Question, blank=True, null=True, on_delete=models.CASCADE)

@@ -11,3 +11,8 @@
 	display: flex;
 	flex-direction: row;
 }
+
+.vote_active {
+	color: #4498ff;
+	transition: all 0.5s ease-out;
+}

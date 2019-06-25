@@ -6,8 +6,25 @@ from django import conf
 from questions.forms import *
 from django.contrib.auth.decorators import login_required
 from questions.middleware import CheckProfileMiddleware
-
 from questions.models import *
+
+import json
+
+
+class HttpResponseAjax(HttpResponse):
+    def __init__(self, status='success', **kwargs):
+        kwargs['status'] = status
+        super(HttpResponseAjax, self).__init__(
+            content=json.dumps(kwargs),
+            content_type='application/json',
+        )
+
+
+class HttpResponseAjaxError(HttpResponseAjax):
+    def _init__(self, code, message):
+        super(HttpResponseAjaxError, self).__init__(
+            status='error', code=code, message=message
+        )
 
 
 def pagination(page, object_list):
@@ -43,9 +60,56 @@ def index(request):
     # Чтобы не использовать один и тот же код много раз- можно использовать Middleware
     questions = Question.objects.sort_by_datetime()
     quests_page = pagination(request.GET.get('page'), questions)
+    likes = []
+    dislikes = []
+    if request.user.is_authenticated:
+        for quest in quests_page.object_list:
+            try:
+                vote = Like.objects.get(user=request.profile, question_id=quest.id)
+                if vote.type == Like.LIKE:
+                    likes.append(quest.id)
+                elif vote.type == Like.DISLIKE:
+                    dislikes.append(quest.id)
+            except models.ObjectDoesNotExist:
+                pass
+        if request.is_ajax():
+            ajax_type = request.POST.get('type')
+            ajax_id = request.POST.get('id')
+            ajax_vote = request.POST.get('vote')
+            filter_likes = Like.objects.filter(user=request.profile, question_id=ajax_id)
+            quest = Question.objects.get(id=ajax_id)
+            if filter_likes:
+                if filter_likes[0].type == ajax_vote:
+                    return HttpResponseAjaxError(
+                        code="already_vote",
+                        message=u'This vote is already exist!'
+                    )
+                else:
+                    filter_likes[0].delete()
+                    if filter_likes[0].type == Like.LIKE:
+                        quest.rating -= 1
+                    else:
+                        quest.rating += 1
+                    quest.save()
+            new_vote = Like(type=ajax_vote, user=request.profile, question_id=ajax_id)
+            new_vote.save()
+            if ajax_vote == Like.LIKE:
+                quest.rating += 1
+            else:
+                quest.rating -= 1
+            quest.save()
+            return HttpResponseAjax(
+                rating=quest.rating
+            )
+
+    else:
+        if request.is_ajax():
+            return HttpResponseAjaxError(
+                code="no_auth",
+                message=u'You need to auth before voting',
+            )
     tags = Tag.objects.sort_by_rating()[:20]
-    # print("second yo")
-    return render(request, 'questions/index.html', context={'object_list': quests_page, 'tags': tags,
+    return render(request, 'questions/index.html', context={'object_list': quests_page, 'tags': tags, 'likes': likes, 'dislikes': dislikes,
                                                             'user': request.profile, 'name': request.username})
 
 

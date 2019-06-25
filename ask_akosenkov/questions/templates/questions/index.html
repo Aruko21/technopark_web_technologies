@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block content %}
-
+    <div class="ajax_error"></div>
     {% for question in object_list %}
         <!--Post-->
 {#        NOTE: У row значение padding - отрицательное, поэтому row перекрывает padding, который устанавливает col#}
@@ -27,14 +27,31 @@
                     </div>
 
                     <div class="row m-2 border border-dark rounded">
-                        <h3 class="m-auto">{{ question.rating }}</h3>
+                        <h3 class="m-auto vote_rating">{{ question.rating }}</h3>
                     </div>
 
                     <div class="row m-2">
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-secondary"><i class="far fa-thumbs-up"></i></button>
-                            <button type="button" class="btn btn-secondary"><i class="far fa-thumbs-down"></i></button>
-                        </div>
+                        <form class="like_dislike_ajax d-inline-flex" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="type" value="question">
+                            <input type="hidden" name="id" value="{{ question.id }}">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-secondary like_button">
+                                    {% if question.id in likes %}
+                                        <i class="fas fa-thumbs-up vote_active"></i>
+                                    {% else %}
+                                        <i class="far fa-thumbs-up"></i>
+                                    {% endif %}
+                                </button>
+                                <button type="button" class="btn btn-secondary dislike_button">
+                                    {% if question.id in dislikes %}
+                                        <i class="fas fa-thumbs-down vote_active"></i>
+                                    {% else %}
+                                        <i class="far fa-thumbs-down"></i>
+                                    {% endif %}
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
@@ -69,4 +86,8 @@
         {% include 'questions/include/pagination.html' %}
     {% endblock %}
 
+{% endblock %}
+
+{% block js %}
+    <script src={% static 'js/main.js' %}></script>
 {% endblock %}
